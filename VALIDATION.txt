@@ -1,0 +1,6 @@
+Input rows: 48895
+Cleaned rows: 48586
+Coordinate-eligible rows: 48586
+Most recent review: 2019-07-08
+Adjusted R-squared (independent Python check): 0.482974
+R runtime unavailable; Shiny execution has not been verified.
