@@ -1,47 +1,91 @@
-# NYC Airbnb Explorer — Tobi Adenola
+# NYC Airbnb Explorer
 
-A Shiny + Leaflet dashboard built with your original AB_NYC.csv. Includes clustered listing map, linked filters, summary metrics, price charts, searchable table, CSV export, and a log-price regression estimator.
+An interactive R Shiny dashboard for exploring historical NYC Airbnb listings through maps, filters, price comparisons, and regression-based price estimation.
 
-## Run in RStudio
+Created by **Tobi Adenola**.
 
-1. Extract this folder.
-2. Install the packages once in the R console:
+## Dashboard preview
+
+### Listing map
+![NYC Airbnb listing map](dashboard-map.png)
+
+### Price insights
+![NYC Airbnb price insights](price-insights.png)
+
+## Features
+
+- Interactive Leaflet map with clustered listings and clickable details
+- Filters for borough, neighbourhood, room type, nightly price, and minimum stay
+- Listing-title search
+- Summary cards showing listing count, median price, and neighbourhood count
+- Price distributions and comparisons by borough and room type
+- Searchable listings table
+- Downloadable filtered data
+- Regression-based nightly price estimator with a prediction interval
+
+## Tools
+
+R, Shiny, Leaflet, ggplot2, and DT.
+
+## Run locally
+
+Download or clone this repository, then install the required packages:
 
 ```r
 install.packages(c("shiny", "leaflet", "ggplot2", "DT"))
 ```
 
-3. Open app.R and click **Run App**. Alternatively, from the parent directory:
+Open `app.R` in RStudio and click **Run App**.
+
+Alternatively, from the directory containing the repository folder:
 
 ```r
-shiny::runApp("nyc-airbnb-shiny")
+shiny::runApp("nyc-airbnb-shiny-dashboard")
 ```
 
-Requires R 4.1 or later. Internet is needed for map tiles. No Mapbox account or key is needed.
+Requires R 4.1 or later. An internet connection is needed for map tiles. No Mapbox API key is required.
 
-## Hosting
+## Data and preparation
 
-This is an R application and needs an R-capable server. To publish on shinyapps.io, configure your own account using its deployment instructions, then run:
+The included `data/AB_NYC.csv` contains 48,895 historical NYC Airbnb listings from 2019.
+
+Following the original analysis:
+- Listings with prices above $0 and below $1,000 are retained.
+- The cleaned dataset contains 48,586 listings.
+- Missing reviews per month are replaced with zero.
+- Missing review dates remain missing.
+
+This dashboard uses a historical snapshot. Prices and availability do not represent current booking conditions.
+
+## Price estimator
+
+The estimator uses the regression formula:
 
 ```r
-install.packages("rsconnect")
-rsconnect::deployApp("nyc-airbnb-shiny")
+log(price) ~ room_type + neighbourhood_group + reviews_per_month
 ```
 
-The app has not been published. Account setup and deployment require your hosting account.
+The model is fitted to the complete cleaned dataset and does not change with dashboard filters.
 
-## Analysis choices
+Exponentiating the predicted log price produces an estimate of conditional median nightly price. The app also displays a transformed 95% prediction interval.
 
-- Original input: 48,895 listings. Prices strictly above 0 and below 1,000 are retained.
-- Missing reviews per month are replaced with zero; missing review dates are left missing.
-- Regression matches the original report: log(price) ~ room_type + neighbourhood_group + reviews_per_month.
-- exp(prediction) estimates conditional median price. A transformed 95% prediction interval is displayed; no held-out accuracy is claimed.
-- Filters affect map, charts, listing table, and export. Regression uses the full cleaned dataset.
-- These are historical listing prices, not current quotes or verified availability.
-- Listing text is escaped in map popups and tables.
+The model describes historical associations. No held-out predictive accuracy is claimed.
 
-## Validation
+## Relationship to the original project
 
-Input columns, cleaning counts, coordinate eligibility, and the regression design were checked against the supplied CSV and original report. This environment has no R runtime; end-to-end Shiny execution remains to be verified in RStudio. See VALIDATION.txt for data checks.
+This dashboard builds on my [NYC Airbnb Predictive Analytics project](https://github.com/adenolatobi/nyc-airbnb-predictive-analytics).
 
-Official references: https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/ and https://rstudio.github.io/leaflet/
+The original project focuses on statistical analysis and modeling. This repository focuses on making the data and regression accessible through an interactive application.
+
+## Validation and status
+
+The app was launched successfully in RStudio by the author. Dataset checks confirmed the cleaning counts and independently reproduced the regression’s adjusted R-squared of approximately 0.483.
+
+The app currently runs locally and has not been deployed online.
+
+## Author
+
+**Tobi Adenola**
+
+- [GitHub](https://github.com/adenolatobi)
+- [Portfolio](https://tobiadenola.com)
